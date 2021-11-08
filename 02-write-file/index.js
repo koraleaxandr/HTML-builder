@@ -9,7 +9,7 @@ const {stdin, stdout} = process;
 // );
 const output = fs.createWriteStream(path.join(__dirname, 'mynotes.txt'));
 
-let exit = 'exit';
+
 
 stdout.write('Write your text or type exit\n');
 stdin.on('data', data => { 
