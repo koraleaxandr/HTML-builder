@@ -23,7 +23,7 @@ fs.readdir(folder, {
 
 
 function splitCssFiles() {
-    let bundle = [];
+    
     fs, fs.readdir(stylesDirPath, {
             withFileTypes: true
         }, (err, files) => {
