@@ -13,12 +13,12 @@ fs.readdir(folder, {withFileTypes: true}, (err, files) => {
             fs.rm(path.join(__dirname, 'project-dist', file.name), {recursive: true,force: true}, (err) => {                   
                 
                 if (err) 
-                //throw err;
-                console.log(err);
-               // splitCssFiles();
+                throw err;
+                console.log(err);              
                 });
         }
-    });
+    }); 
+    splitCssFiles(); 
 });
 
 
@@ -45,5 +45,5 @@ function splitCssFiles() {
             })
     };
 
-  setTimeout(splitCssFiles, 1200);
-    //console.log(bundle);
+ // setTimeout(splitCssFiles, 1200);
+   
