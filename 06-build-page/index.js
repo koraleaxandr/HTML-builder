@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Buffer = require('buffer');
-const folder = path.join(__dirname,'assets');
-let dirPath = folder;
+
 const stylesDirPath = path.join(__dirname, 'styles');
 //const stream = fs.createReadStream('template.html', 'utf-8');
 // let data = '';
@@ -11,7 +10,7 @@ const stylesDirPath = path.join(__dirname, 'styles');
 
 fs.rm(path.join(__dirname, 'project-dist'), {recursive: true, force: true}, (err) => {
   splitCssFiles();
-  copyFolder();
+//   copyDir(path.join(__dirname,'assets'));
     if (err)
        // throw err;
        console.log(err);
@@ -22,11 +21,15 @@ fs.rm(path.join(__dirname, 'project-dist'), {recursive: true, force: true}, (err
     });
 });
 
-function copyDir(file) {    
-    dirPath += ('/'+ file);
-    fs.readdir(file, {withFileTypes: true}, (err, files) => {
+function copyDir(from,dest) { 
+    fs.mkdir(dest,{ recursive: true }, (err) => {
+  if (err) throw err;
+});    
+    fs.readdir(from, {withFileTypes: true}, (err, files) => {
                 if (err) throw err;
                 files.forEach(file => {
+                    const srcPath = path.join(from,entry.name);
+                    const destPath = path.join(dest,entry.name);
                             if (file.isFile()) {                                
                            fs.copyFile(path.join(__dirname, file.name),
                                path.join(dirPath, file.name),
@@ -35,17 +38,28 @@ function copyDir(file) {
                                        //throw err;
                                        console.log(err);
                                })
-                            } else copyDir();
+                            } else copyDir(srcPath, destPath);
                         })
                     });
                 };
 
 
-
+// async function copyDir(src,dest) {
+//     const entries = await FSP.readdir(src,{withFileTypes:true});
+//     await FSP.mkdir(dest);
+//     for(let entry of entries) {
+//         const srcPath = Path.join(src,entry.name);
+//         const destPath = Path.join(dest,entry.name);
+//         if(entry.isDirectory()) {
+//             await copyDir(srcPath,destPath);
+//         } else {
+//             await FSP.copyFile(srcPath,destPath);
+//         }
+//     }
+// }
 
 function copyFolder() { 
-
-    fs.readdir(folder, {withFileTypes: true}, (err, files) => {
+     fs.readdir(path.join(__dirname,'assets'), {withFileTypes: true}, (err, files) => {
         copyDir();
         if (err) throw err; 
     });
