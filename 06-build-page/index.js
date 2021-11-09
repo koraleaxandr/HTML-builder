@@ -1,12 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const Buffer = require('buffer');
-
+const components = path.join(__dirname, 'components');
 const stylesDirPath = path.join(__dirname, 'styles');
-//const stream = fs.createReadStream('template.html', 'utf-8');
-// let data = '';
-// stream.on('data', chunk => data += chunk);
-// stream.on('end', () => console.log('End', data));
+//------------******************************************************************************
+
 
 fs.rm(path.join(__dirname, 'project-dist'), {recursive: true, force: true}, (err) => { 
   splitCssFiles();
@@ -18,7 +16,7 @@ fs.rm(path.join(__dirname, 'project-dist'), {recursive: true, force: true}, (err
         //throw err;
        console.log(err);       
 });
-
+//********************************************************************************************** */
 function copyDir(from, dest) { 
     fs.mkdir(dest,{ recursive: true }, (err) => {
   if (err) throw err;
@@ -41,7 +39,7 @@ function copyDir(from, dest) {
                         })
                     });
                 };
-
+//*********************************************************************************************** */
 function splitCssFiles() {     
     fs.readdir(stylesDirPath, {withFileTypes: true}, (err, files) => {
         if (err) throw err;
@@ -65,8 +63,40 @@ function splitCssFiles() {
         });
     })
 }
+/************************************************************************************************************ */
+// const stream = fs.createReadStream(path.join(__dirname,'template.html'), 'utf-8');
+// let dataHtml = '';
+// let dataheader = '';
+// stream.on('data', chunk => dataHtml += chunk);
+// stream.on('end', () => {
+//     //console.log('End', dataHtml);
+
+// const streamheader = fs.createReadStream(path.join(components,'header.html'), 'utf-8');
+
+// streamheader.on('data', chunk => dataheader += chunk);
+// //console.log(dataheader);
+// streamheader.on('end', () => {
+//     //console.log(dataheader);
+    
+// fs.appendFile(path.join(__dirname, 'project-dist', 'index.html'), dataHtml.replace('{{header}}', '<header class="header">' + dataheader, (err) => {
+//                             if (err) throw err;
+//                             console.log('The "data to append" was appended to HTML file!');
+//                         })
+// })
+
+// const streamarticles = fs.createReadStream(path.join(components,'articles.html'), 'utf-8');
+// let dataarticles = '';
+// streamarticles.on('data', chunk => dataheader += chunk);
+// //streamarticles.on('end', () => console.log('End', dataarticles));
+
+// const streamfooter = fs.createReadStream(path.join(components,'footer.html'), 'utf-8');
+// let datafooter = '';
+// streamfooter.on('data', chunk => dataheader += chunk);
+// //streamfooter.on('end', () => console.log('End', datafooter));
 
 
+
+//********************************************************************************************* */
 
 
 
