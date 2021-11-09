@@ -22,13 +22,11 @@ fs.readdir(folder, {
 });
 
 
-function splitCssFiles() {
-    
+function splitCssFiles() {    
     fs, fs.readdir(stylesDirPath, {
             withFileTypes: true
         }, (err, files) => {
             if (err) throw err;
-
             files.forEach(file => {
                     if (path.extname(file.name) === '.css') {
                         fs.open(path.join(__dirname, 'styles', file.name), (err, fd) => {

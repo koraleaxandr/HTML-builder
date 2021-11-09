@@ -4,18 +4,12 @@ const path = require('path');
 
 const folder = path.join(__dirname, 'files');
 
-fs.rm(path.join(__dirname, 'files-copy'), {recursive: true, force: true}, 
-
-(err) => {
+fs.rm(path.join(__dirname, 'files-copy'), {recursive: true, force: true}, (err) => {
   copyDir();
     if (err)
        // throw err;
        console.log(err);
-       fs.mkdir(path.join(__dirname, 'files-copy'), (err) => {
-        if (err)
-            //throw err;
-            console.log(err);
-    });
+       
 });
 
 
