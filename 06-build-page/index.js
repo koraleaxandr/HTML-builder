@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Buffer = require('buffer');
+const fsp = require('fs/promises');
 const components = path.join(__dirname, 'components');
 const stylesDirPath = path.join(__dirname, 'styles');
 //------------******************************************************************************
@@ -10,6 +10,7 @@ fs.rm(path.join(__dirname, 'project-dist'), {recursive: true, force: true}, (err
   splitCssFiles();
   fs.mkdir(path.join(__dirname, 'project-dist'),{ recursive: true }, (err) => {
       copyDir(path.join(__dirname,'assets'), path.join(__dirname, 'project-dist', 'assets'));
+      getHTML();
   if (err) throw err;
 });     
     if (err)
@@ -46,57 +47,51 @@ function splitCssFiles() {
         let data = '';
         files.forEach(file => {
             if (file.isFile() && path.extname(file.name) === '.css') {
-                fs.open(path.join(__dirname, 'styles', file.name), (err, fd) => {
-                    if (err) throw err;
-                    fs.read(fd, (err, bytesRead, buffer) => {
-                        if (err) throw err;
-                        console.log(buffer);
-                        fs.appendFile(path.join(__dirname, 'project-dist', 'style.css'), buffer + '\n', (err) => {
-                            if (err) throw err;
+                
+const readStream = fs.createReadStream(path.join(__dirname, 'styles', file.name), 'utf-8');
+             readStream.on('data', partData => data += partData);
+             readStream.on('end', ()=> fs.createWriteStream(path.join(__dirname, 'project-dist', 'style.css')).write(data));                   
                             console.log('The "data to append" was appended to file!');
-                        })
-                    })
-
-                })
+                     
             }
-
         });
     })
 }
 /************************************************************************************************************ */
-// const stream = fs.createReadStream(path.join(__dirname,'template.html'), 'utf-8');
-// let dataHtml = '';
-// let dataheader = '';
-// stream.on('data', chunk => dataHtml += chunk);
-// stream.on('end', () => {
-//     //console.log('End', dataHtml);
+const getFilenamesInDir = (directory) => {
+    return new Promise((res, err) => {
+        let fileNames = [];
+        fs.readdir(directory, (err, files) => { 
+            for (const file of files) {
+                if(path.extname(file)==='.html')
+                    fileNames.push(path.parse(file).name);               
+            }
+            res(fileNames);
+        })
+    }) 
+  }
 
-// const streamheader = fs.createReadStream(path.join(components,'header.html'), 'utf-8');
+async function getHTML() {
+    // await fsp.mkdir(path.join(__dirname, 'project-dist'), {recursive:true});
+     let template = await getFile(path.join(__dirname, 'template.html'));
+     const files = await getFilenamesInDir(path.join(__dirname, 'components'));
+     const writeStream = fs.createWriteStream(path.join(__dirname, 'project-dist', 'index.html'));
+     for (const file of files) {        
+        template = template.replace(`{{${file}}}`, await getFile(path.join(__dirname, 'components', `${file}.html`)));        
+     }
+    // console.log(template);
+     writeStream.write(template);          
+ };
 
-// streamheader.on('data', chunk => dataheader += chunk);
-// //console.log(dataheader);
-// streamheader.on('end', () => {
-//     //console.log(dataheader);
-    
-// fs.appendFile(path.join(__dirname, 'project-dist', 'index.html'), dataHtml.replace('{{header}}', '<header class="header">' + dataheader, (err) => {
-//                             if (err) throw err;
-//                             console.log('The "data to append" was appended to HTML file!');
-//                         })
-// })
-
-// const streamarticles = fs.createReadStream(path.join(components,'articles.html'), 'utf-8');
-// let dataarticles = '';
-// streamarticles.on('data', chunk => dataheader += chunk);
-// //streamarticles.on('end', () => console.log('End', dataarticles));
-
-// const streamfooter = fs.createReadStream(path.join(components,'footer.html'), 'utf-8');
-// let datafooter = '';
-// streamfooter.on('data', chunk => dataheader += chunk);
-// //streamfooter.on('end', () => console.log('End', datafooter));
+ const getFile = (pathToFile) => {
+    return new Promise((res, err) => {
+        let data = '';
+        const readStream = fs.createReadStream(pathToFile);
+        readStream.on('data', chunk => {data += chunk; res(data)});
+    });
+ }
 
 
 
 //********************************************************************************************* */
-
-
 
